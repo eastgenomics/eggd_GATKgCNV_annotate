@@ -1,0 +1,115 @@
+{
+  "name": "gCNV_vcf2tsv_v0.0.1",
+  "title": "gCNV_vcf2tsv_v0.0.1",
+  "summary": "Dx wrapper to filter and annotate GATK CNV vcfs",
+  "dxapi": "1.0.0",
+  "version": "0.0.1",
+  "inputSpec": [
+    {
+      "name": "sample_vcf",
+      "label": "Intervals vcf file of a sample",
+      "class": "file",
+      "optional": false,
+      "patterns": ["*_intervals.vcf","*.vcf.gz"],
+      "help": "Sample_intervals.vcf file"
+    },
+    {
+      "name": "panel_bed",
+      "label": "panel BED file",
+      "class": "file",
+      "optional": false,
+      "patterns": ["*.bed"],
+      "help": "List of regions in panel, sorted in chromosome order"
+    },
+    {
+      "name": "exon_list",
+      "label": "exons BED file",
+      "class": "file",
+      "optional": false,
+      "patterns": ["*.bed", "*.tsv"],
+      "help": "List of exons for selected transcripts, sorted in chromosome order"
+    },
+    {
+      "name": "toVisualise",
+      "label": "Generate per sample gCNV.bed file for visualisation in IGV?",
+      "class": "boolean",
+      "optional": true,
+      "default": false,
+      "help": "Whether to generate a gCNV.bed file that can visualise copy ratio of the sample against the run mean and standard deviation"
+    },
+    {
+      "name": "sample_copy_ratios",
+      "label": "Denoised copy ratio of sample",
+      "class": "file",
+      "optional": true,
+      "help": "Used to generate a gCNV.bed file that can visualise copy ratio of the sample against the run mean and standard deviation"
+    },
+    {
+      "name": "mean_copy_ratios",
+      "label": "Mean and stdev copy ratio for all intervals",
+      "class": "file",
+      "optional": true,
+      "help": "Used to generate a gCNV.bed file that can visualise copy ratio of the sample against the run mean and standard deviation"
+    }
+  ],
+  "outputSpec": [
+    {
+      "name": "filtered_vcf",
+      "label": "sample CNVs filtered by panel",
+      "class": "file"
+    },
+    {
+      "name": "annotated_tsv",
+      "label": "filtered sample CNVs with exon number annotation",
+      "class": "file"
+    },
+    {
+      "name": "visualisation_files",
+      "label": "gCNV bed and index",
+      "class": "array:file",
+      "help": " for sample copy ratio visualisation"
+    }
+  ],
+  "runSpec": {
+    "distribution": "Ubuntu",
+    "release": "20.04",
+    "version": "0",
+    "interpreter": "bash",
+    "file": "src/filterannot.sh",
+    "timeoutPolicy": {
+      "*": {
+        "hours": 1
+      }
+    },
+    "assetDepends": [
+      {
+        "name": "htslib",
+        "project": "project-Fkb6Gkj433GVVvj73J7x8KbV",
+        "folder": "/app_assets/htslib/htslib_v1.14.0",
+        "version": "1.14.0"
+      },
+      {
+        "name": "bedtools",
+        "project": "project-Fkb6Gkj433GVVvj73J7x8KbV",
+        "folder": "/app_assets/bedtools/bedtools_v2.30.0",
+        "version": "2.30.0"
+      }
+    ]
+  },
+  "access": {
+    "allProjects": "VIEW",
+    "project": "CONTRIBUTE",
+    "network": [
+      "*"
+    ]
+  },
+  "regionalOptions": {
+    "aws:eu-central-1": {
+      "systemRequirements": {
+        "*": {
+          "instanceType": "mem1_ssd1_v2_x2"
+        }
+      }
+    }
+  }
+}
