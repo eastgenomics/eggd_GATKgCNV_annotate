@@ -25,7 +25,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        '--panel', help='name of panel to suffix output bed file with'
+        '--sample_name', help='name of sample to prefix output bed file with'
     )
     parser.add_argument(
         '--sample',
@@ -41,7 +41,7 @@ def parse_args():
     return args
 
 
-def write_outfile(copy_ratio_df, sample, panel):
+def write_outfile(copy_ratio_df, sample):
     """
         Write output bed files and compress with bgzip.
         Bed file with highlight_samples has random colouring of each sample
@@ -51,7 +51,7 @@ def write_outfile(copy_ratio_df, sample, panel):
             - copy_ratio_df (df): df of all copy ratios to write
             - prefix (str): prefix for naming output file
     """
-    outfile = "{}_{}_copy_ratios.gcnv.bed".format(sample, panel)
+    outfile = "{}_copy_ratios.gcnv.bed".format(sample)
 
     with open(outfile, 'w') as fh:
         # colour mapping for tracks
@@ -79,18 +79,18 @@ def write_outfile(copy_ratio_df, sample, panel):
 def main():
 
     args = parse_args()
-    print(args.sample)
+    # print(args.sample_name)
 
     # Read in the sample's copy ratio file
     sample_copy_ratio_df = pd.read_csv(
         args.sample, sep='\t', comment='@', header=0,
-        names=['chr', 'start', 'end', args.sample]
+        names=['chr', 'start', 'end', args.sample_name]
     )
     intervals_df = sample_copy_ratio_df.iloc[:, :3].copy()
 
     # check if mean copy ratio file is provided as tsv or csv
     mean_std_copy_ratio_df = pd.read_csv(args.mean_std, sep='\t')
-    if len(mean_std_copy_ratio_df) < 2:
+    if len(mean_std_copy_ratio_df.columns) < 2:
         mean_std_copy_ratio_df = pd.read_csv(args.mean_std)
 
     assert sample_copy_ratio_df.iloc[:, :3].equals(
@@ -102,7 +102,7 @@ def main():
     print(len(copy_ratio_df))
 
     # write output bed file
-    write_outfile(copy_ratio_df, args.sample)
+    write_outfile(copy_ratio_df, args.sample_name)
 
 
 if __name__ == "__main__":

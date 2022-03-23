@@ -43,7 +43,7 @@ main() {
                 dx download "$sample_copy_ratios" -o sample_copy_ratios.tsv
                 dx download "$mean_copy_ratios" -o mean_copy_ratios.tsv
                 echo "Generating gcnv bed file for sample"
-                python3 sample_gcnv_bed.py \
+                python3 generate_gcnv_bed.py --sample_name $sample_copy_ratios_prefix \
                 --sample sample_copy_ratios.tsv --mean_std mean_copy_ratios.tsv
             else
                 echo "Run mean copy ratio file was not provided"
