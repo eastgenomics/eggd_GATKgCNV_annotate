@@ -1,6 +1,6 @@
 {
-  "name": "gCNV_vcf2tsv_v0.0.1",
-  "title": "gCNV_vcf2tsv_v0.0.1",
+  "name": "GATKgCNV_annotate_v0.0.1",
+  "title": "GATKgCNV_annotate_v0.0.1",
   "summary": "Dx wrapper to filter and annotate GATK CNV vcfs",
   "dxapi": "1.0.0",
   "version": "0.0.1",
