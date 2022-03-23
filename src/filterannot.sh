@@ -27,7 +27,7 @@ main() {
 
     # B. Annotate CNV calls with gene, transcript and exon number information
     echo "Annotating the filtered CNV calls"
-    python3 annotate_vcf2tsv.py filtered.vcf exons.bed "$panel_bed_prefix"
+    python3 annotate_calls.py filtered.vcf exons.bed "$panel_bed_prefix"
 
     # Create folders for the output files:
     fv=out/filtered_vcf/ && mkdir -p ${fv}

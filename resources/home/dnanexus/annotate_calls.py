@@ -27,15 +27,17 @@ def vcf2df(vcf_file):
         CNV_call['start'] = record.POS  # int
         CNV_call['end'] = record.INFO["END"]
         CNV_call['ID'] = record.ID  # str
-        
         format_fields = record.FORMAT.split(':')  # GT:CN:NP:QA:QS:QSE:QSS
         for i, field in enumerate(format_fields):
             CNV_call[field] = call_sample.data[i]
-        if CNV_call['GT'] == '0':
+        if int(CNV_call['CN']) == 2:
             continue  # skip normal regions
-        CNV_call['CNV'] = CNV_states[CNV_call['GT']]
-
-        CNVcalls = CNVcalls.append(CNV_call, ignore_index=True)
+        elif int(CNV_call['CN']) < 2:
+            CNV_call['CNV'] = 'DEL'
+        else:
+            CNV_call['CNV'] = 'DUP'
+        CNVcalls = CNVcalls.append(CNV_call, ignore_index=True).astype(
+                    {'start': 'int64', 'end': 'int64', 'CN': 'int64'})
     return CNV_call['sample'], CNVcalls
 
 
@@ -114,22 +116,20 @@ def annotate(calls_df, exons_df):
     # create annotation dataframe
     CNV_annotation = pd.DataFrame.from_dict({"ID": calls, "gene": genes,
                 "transcript": transcripts, "exon": exons, "length": lengths})
-    
     return CNV_annotation
 
 
 if __name__ == "__main__":
-    CNV_states = {'0': 'normal', '1': 'DEL', '2': 'DUP'}
 
     # Parse command inputs: filtered vcf and exons.tsv
     vcf_file = sys.argv[1]
     exons_tsv = sys.argv[2]
-    panel_name = sys.argv[3].strip('.bed')
+    panel_name = sys.argv[3]
 
     # Parse VCF file
-    sample_name, sampleCNVcalls = vcf2df(vcf_file)
+    sample_name, CNV_calls = vcf2df(vcf_file)
     # Ensure that filtered_vcf has variants, otherwise exit
-    if len(sampleCNVcalls) < 1:
+    if len(CNV_calls) < 1:
         print(f"Sample {sample_name} has no CNVs")
         # No CNVs detected in the panel regions
         line = (
@@ -147,10 +147,12 @@ if __name__ == "__main__":
         "gene", "transcript", "exon_num"])
 
     # Add annotation: "gene","transcript","exon","length" columns
-    annotated_calls = annotate(sampleCNVcalls, exons_df)
-    annotated_calls = annotated_calls[["chrom", "start", "end", "CNV",
-        "gene", "transcript", "exon", "length",
-        "copy_number", "ID", "max_posterior", "qual"]]
-    
-    annotated_calls.to_csv(sample_name + "_annotated_CNVs.tsv", sep='\t',
-        encoding='utf-8', header=True, index=False)
+    CNV_annotation = annotate(
+        CNV_calls[["chrom", "start", "end", "ID"]], exons_df
+    )
+    annotated_CNVs = CNV_calls.merge(CNV_annotation, on='ID')
+
+    # Write annotated calls and counts to files
+    annotated_CNVs.to_csv(sample_name + "_annotated_CNVs.tsv", sep='\t',
+        encoding='utf-8', header=True, index=False
+    )
