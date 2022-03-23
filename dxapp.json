@@ -42,6 +42,7 @@
       "label": "Denoised copy ratio of sample",
       "class": "file",
       "optional": true,
+      "patterns": ["*.tsv"],
       "help": "Used to generate a gCNV.bed file that can visualise copy ratio of the sample against the run mean and standard deviation"
     },
     {
@@ -49,6 +50,7 @@
       "label": "Mean and stdev copy ratio for all intervals",
       "class": "file",
       "optional": true,
+      "patterns": ["*.csv", "*.tsv"],
       "help": "Used to generate a gCNV.bed file that can visualise copy ratio of the sample against the run mean and standard deviation"
     }
   ],
@@ -96,6 +98,13 @@
       }
     ]
   },
+  "developers":[
+    "user-sophier",
+    "org-emee_1"
+  ],
+  "authorizedUsers": [
+    "org-emee_1"
+  ],
   "access": {
     "allProjects": "VIEW",
     "project": "CONTRIBUTE",

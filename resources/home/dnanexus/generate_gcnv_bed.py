@@ -99,7 +99,6 @@ def main():
 
     copy_ratio_df = pd.merge(sample_copy_ratio_df, mean_std_copy_ratio_df,
                             on=['chr', 'start', 'end'])
-    print(len(copy_ratio_df))
 
     # write output bed file
     write_outfile(copy_ratio_df, args.sample_name)

@@ -39,7 +39,7 @@ main() {
     if $toVisualise; then
         if [[ ! -z $sample_copy_ratios ]]; then
             if [[ ! -z $mean_copy_ratios ]]; then
-                echo "Sample copy ratios and mean & std are provided"
+                echo "Sample copy ratios and run mean & std are provided"
                 dx download "$sample_copy_ratios" -o sample_copy_ratios.tsv
                 dx download "$mean_copy_ratios" -o mean_copy_ratios.tsv
                 echo "Generating gcnv bed file for sample"
