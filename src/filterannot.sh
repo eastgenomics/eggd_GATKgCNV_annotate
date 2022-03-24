@@ -36,6 +36,8 @@ main() {
     at=out/annotated_tsv/ && mkdir -p ${at}
     cp *_annotated_CNVs.tsv ${at}
 
+    vf=out/visualisation_files/ && mkdir -p ${vf}
+
     if $toVisualise; then
         if [[ ! -z $sample_copy_ratios ]]; then
             if [[ ! -z $mean_copy_ratios ]]; then
@@ -45,6 +47,9 @@ main() {
                 echo "Generating gcnv bed file for sample"
                 python3 generate_gcnv_bed.py --sample_name $sample_copy_ratios_prefix \
                 --sample sample_copy_ratios.tsv --mean_std mean_copy_ratios.tsv
+
+                mv ./*.gcnv.bed.gz* "${vf}"/
+
             else
                 echo "Run mean copy ratio file was not provided"
             fi
@@ -53,8 +58,6 @@ main() {
         fi
     fi
 
-    vf=out/visualisation_files/ && mkdir -p ${vf}
-    cp *_annotated_CNVs.tsv ${vf}
 
     # C. Run VEP annotation:
     # for vcf_file in inputs/*_segments.vcf; do

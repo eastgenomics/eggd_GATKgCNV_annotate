@@ -2,7 +2,7 @@
 
 Dx wrapper to run a custom script that filters CNV calls from the GATK _segments.vcf output file to panel regions and annotates the filtered CNV calls with gene symbol, transcript and exon number information.
 
-This is the source code for an applet that runs on the DNAnexus Platform.
+This is the source code for an app that runs on the DNAnexus Platform.
 
 ## What does this app do?
 Filters the GATK _segments.vcf file (output from the CNV calling app) with bcftools.
