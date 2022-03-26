@@ -1,6 +1,6 @@
 {
-  "name": "GATKgCNV_annotate_v0.0.1",
-  "title": "GATKgCNV_annotate_v0.0.1",
+  "name": "GATKgCNV_annotate_v0.0.3",
+  "title": "GATKgCNV_annotate_v0.0.3",
   "summary": "Dx wrapper to filter and annotate GATK CNV vcfs",
   "dxapi": "1.0.0",
   "version": "0.0.1",
@@ -28,30 +28,6 @@
       "optional": false,
       "patterns": ["*.bed", "*.tsv"],
       "help": "List of exons for selected transcripts, sorted in chromosome order"
-    },
-    {
-      "name": "toVisualise",
-      "label": "Generate per sample gCNV.bed file for visualisation in IGV?",
-      "class": "boolean",
-      "optional": true,
-      "default": false,
-      "help": "Whether to generate a gCNV.bed file that can visualise copy ratio of the sample against the run mean and standard deviation"
-    },
-    {
-      "name": "sample_copy_ratios",
-      "label": "Denoised copy ratio of sample",
-      "class": "file",
-      "optional": true,
-      "patterns": ["*.tsv"],
-      "help": "Used to generate a gCNV.bed file that can visualise copy ratio of the sample against the run mean and standard deviation"
-    },
-    {
-      "name": "mean_copy_ratios",
-      "label": "Mean and stdev copy ratio for all intervals",
-      "class": "file",
-      "optional": true,
-      "patterns": ["*.csv", "*.tsv"],
-      "help": "Used to generate a gCNV.bed file that can visualise copy ratio of the sample against the run mean and standard deviation"
     }
   ],
   "outputSpec": [
@@ -64,12 +40,6 @@
       "name": "annotated_tsv",
       "label": "filtered sample CNVs with exon number annotation",
       "class": "file"
-    },
-    {
-      "name": "visualisation_files",
-      "label": "gCNV bed and index",
-      "class": "array:file",
-      "help": " for sample copy ratio visualisation"
     }
   ],
   "runSpec": {
