@@ -15,7 +15,6 @@ main() {
     echo "Downloading input files"
     dx download "$sample_vcf" -o sample.vcf
     dx download "$panel_bed" -o panel.bed
-    dx download "$exon_list" -o exons.bed
 
     # A. Filter sample VCF with panel bed file
     echo "Filtering the sample VCF"
@@ -27,7 +26,7 @@ main() {
 
     # B. Annotate CNV calls with gene, transcript and exon number information
     echo "Annotating the filtered CNV calls"
-    python3 annotate_calls.py filtered.vcf exons.bed "$panel_bed_prefix"
+    python3 annotate_calls.py filtered.vcf panel.bed
 
     # Create folders for the output files:
     fv=out/filtered_vcf/ && mkdir -p ${fv}
