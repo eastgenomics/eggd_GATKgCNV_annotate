@@ -7,11 +7,11 @@
   "inputSpec": [
     {
       "name": "sample_vcf",
-      "label": "Intervals vcf file of a sample",
+      "label": "sample_segments.vcf file",
       "class": "file",
       "optional": false,
       "patterns": ["*_segments.vcf","*.vcf.gz"],
-      "help": "sample_segments.vcf file"
+      "help": "GATK CNV vcf file of a sample"
     },
     {
       "name": "panel_bed",

@@ -136,7 +136,7 @@ if __name__ == "__main__":
     # Parse command inputs: filtered vcf and exons.tsv
     vcf_file = sys.argv[1]
     panel_bed = sys.argv[2]
-    panel_name = panel_bed.strip('.bed')
+    panel_name = sys.argv[3]
     
     # Load the panel bed file into a dataframe
     exons_df = pd.read_csv(panel_bed, sep='\t')
@@ -161,8 +161,6 @@ if __name__ == "__main__":
         sys.exit(0)
     # else: CNV calls found in panel regions
     outfile = "{}_{}_annotated_CNVs.tsv".format(sample_name, panel_name)
-    with open(outfile, 'w') as fh:
-        fh.write(f"Annotated CNV calls for sample {sample_name} in {panel_name} panel \n")
 
     # Add annotation: "gene","transcript","exon","length" columns
     call_annotation = annotate(
@@ -193,3 +191,6 @@ if __name__ == "__main__":
     annotated_CNVs.to_csv(outfile, sep='\t', header=True, index=False,
         encoding='utf-8', mode='a'
     )
+    with open(outfile, 'w') as fh:
+        fh.write(f"Annotated CNV calls for sample {sample_name} in {panel_name} panel \n")
+

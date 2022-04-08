@@ -16,6 +16,23 @@ main() {
     dx download "$sample_vcf" -o sample.vcf
     dx download "$panel_bed" -o panel.bed
 
+    # Set variables
+    project_id=$DX_PROJECT_CONTEXT_ID
+    version=0
+    matching_files=1
+    # get sample id from vcf file name
+    sample_id=$(grep -oP "^[a-zA-Z0-9]*" <<< $sample_vcf_prefix)
+    # echo $sample_id
+
+    # Tiny chance of race conditions leading to two files with the same name here
+    while [ $matching_files -ne 0 ]; do 
+        version=$((version+1))
+        output_name=${sample_id}_CNV_${version}*.tsv
+        matching_files=$(dx find data --path ${project_id}:/ --name $output_name --brief | wc -l)
+    done;
+    # Output files named with the smallest unused version number
+    output_name=${sample_id}_CNV_${version}.tsv
+
     # A. Filter sample VCF with panel bed file
     echo "Filtering the sample VCF"
     # take the _intervals.vcf output from GATK and zip then index
@@ -26,15 +43,16 @@ main() {
 
     # B. Annotate CNV calls with gene, transcript and exon number information
     echo "Annotating the filtered CNV calls"
-    python3 annotate_calls.py filtered.vcf panel.bed
+    python3 annotate_calls.py filtered.vcf panel.bed $panel_bed_prefix
 
     # Create folders for the output files:
     fv=out/filtered_vcf/ && mkdir -p ${fv}
-    cp filtered.vcf ${fv}/"${sample_vcf_prefix}_filtered.vcf"
+    cp filtered.vcf ${fv}/"${sample_vcf_prefix}_${panel_bed_prefix}_filtered.vcf"
 
     at=out/annotated_tsv/ && mkdir -p ${at}
-    cp *_annotated_CNVs.tsv ${at}
+    cp *_annotated_CNVs.tsv ${at}/$output_name
 
+    ls
     # C. Run VEP annotation:
     # bcftools   -e'GT ="0"' -f'%CHROM %POS [ %GT]\n' sample.vcf
     # bcftools annotate -a exon_annot.bed -c CHROM,POS,INFO/END,gene,transcript,exon_num -o annotated_intervals.vcf  sample_intervals.vcf
