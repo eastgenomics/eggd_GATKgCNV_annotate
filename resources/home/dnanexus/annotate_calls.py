@@ -28,15 +28,14 @@ def vcf2df(vcf_file):
         CNV_call['start'] = record.POS  # int
         CNV_call['end'] = record.INFO["END"]
         CNV_call['ID'] = record.ID  # str
+        if record.ALT[0] is None:
+            continue
+        CNV_call['CNV'] = str(record.ALT[0]).strip("<>")
+
         format_fields = record.FORMAT.split(':')  # GT:CN:NP:QA:QS:QSE:QSS
         for i, field in enumerate(format_fields):
             CNV_call[field] = call_sample.data[i]
-        if int(CNV_call['CN']) == 2:
-            continue  # skip normal regions
-        elif int(CNV_call['CN']) < 2:
-            CNV_call['CNV'] = 'DEL'
-        else:
-            CNV_call['CNV'] = 'DUP'
+
         CNVcalls = CNVcalls.append(CNV_call, ignore_index=True).astype(
                     {'start': 'int64', 'end': 'int64', 'CN': 'int64'})
     return CNV_call['sample'], CNVcalls
@@ -160,7 +159,6 @@ if __name__ == "__main__":
             fh.write(line)
         sys.exit(0)
     # else: CNV calls found in panel regions
-    outfile = "{}_{}_annotated_CNVs.tsv".format(sample_name, panel_name)
 
     # Add annotation: "gene","transcript","exon","length" columns
     call_annotation = annotate(
@@ -188,9 +186,10 @@ if __name__ == "__main__":
             'gene', 'transcript', 'exon(s)', 'exonic range', 'affected bases']
 
     # Write annotated calls to file
+    outfile = "{}_{}_annotated_CNVs.tsv".format(sample_name, panel_name)
     annotated_CNVs.to_csv(outfile, sep='\t', header=True, index=False,
         encoding='utf-8', mode='a'
     )
-    with open(outfile, 'w') as fh:
+    with open(outfile, 'a') as fh:
         fh.write(f"Annotated CNV calls for sample {sample_name} in {panel_name} panel \n")
 
